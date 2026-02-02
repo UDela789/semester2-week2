@@ -9,3 +9,8 @@
 
 
 -- write your sql code here
+
+
+SELECT Members.name, Loans.id
+FROM Members JOIN Loans ON Members.id = Loans.member_id
+
