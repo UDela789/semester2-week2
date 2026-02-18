@@ -18,17 +18,19 @@ def customer_tickets(conn, customer_id):
     Include only tickets purchased by the given customer_id.
     Order results by film title alphabetically.
     """
-
+    choice = int(customer_id)
     # SQL query
-    query = "SELECT films.title, screenings.screen, tickets.price " \
-    "FROM films " \
-    "JOIN screenings ON films.film_id = screenings.film_id" \
-    "JOIN tickets ON screenings.ticket_id = tickets.ticket_id;" \
-    "WHERE customers.customer_id = ?"
+    query = """SELECT films.title, screenings.screen, tickets.price 
+    FROM films  
+    JOIN screenings ON films.film_id = screenings.film_id
+    JOIN tickets ON screenings.screening_id = tickets.screening_id
+    WHERE tickets.customer_id = ?
+    ORDER BY films.title ASC;"""
 
-    # 
+    cursor = conn.execute(query, (choice,))
+    customer_tickets_result = cursor.fetchall()
+    return customer_tickets_result
     
-
 
 def screening_sales(conn):
     """
@@ -38,7 +40,15 @@ def screening_sales(conn):
     Include all screenings, even if tickets_sold is 0.
     Order results by tickets_sold descending.
     """
-    pass
+    query = """
+    SELECT screenings.screening_id, films.title, COUNT(tickets.ticket_id) AS tickets_sold
+    FROM films
+    JOIN screenings ON films.film_id = screenings.film_id 
+    OUTER JOIN tickets ON screenings.screening_id = tickets.screening_id
+    GROUP BY screenings.screening_id    
+    ORDER BY ticket_sold;
+    """
+    
 
 
 def top_customers_by_spend(conn, limit):
