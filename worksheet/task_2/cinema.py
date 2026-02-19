@@ -61,4 +61,16 @@ def top_customers_by_spend(conn, limit):
     Order by total_spent descending.
     Limit the number of rows returned to `limit`.
     """
-    pass
+    choice = int(limit)
+
+    query = """
+    SELECT customers.customer_name, SUM(tickets.price) AS total_spent
+    FROM customers 
+    JOIN tickets ON customers.customer_id = tickets.customer_id
+    GROUP BY customers.customer_name
+    ORDER BY SUM(tickets.price) DESC
+    LIMIT ?;
+    """
+    cursor = conn.execute(query, (choice,))
+    result = cursor.fetchall()
+    return result
