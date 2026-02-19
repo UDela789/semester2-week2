@@ -43,11 +43,15 @@ def screening_sales(conn):
     query = """
     SELECT screenings.screening_id, films.title, COUNT(tickets.ticket_id) AS tickets_sold
     FROM films
-    JOIN screenings ON films.film_id = screenings.film_id 
-    OUTER JOIN tickets ON screenings.screening_id = tickets.screening_id
-    GROUP BY screenings.screening_id    
-    ORDER BY ticket_sold;
+    LEFT JOIN screenings ON films.film_id = screenings.film_id 
+    LEFT JOIN tickets ON screenings.screening_id = tickets.screening_id
+    GROUP BY screenings.screening_id
+    ORDER BY COUNT(tickets.ticket_id) DESC, screenings.screening_id ASC; 
     """
+    cursor = conn.execute(query, )
+    result = cursor.fetchall()
+    return result
+
     
 
 
